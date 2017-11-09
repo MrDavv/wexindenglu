@@ -1,0 +1,13 @@
+{
+  "servers":[
+    {"host":"s6100.fzhmsy.com.cn","port":6100},
+    {"host":"s6101.fzhmsy.com.cn","port":6101},
+    {"host":"s6102.fzhmsy.com.cn","port":6102},
+    {"host":"s6103.fzhmsy.com.cn","port":6103},
+    {"host":"s6104.fzhmsy.com.cn","port":6104},
+    {"host":"s6105.fzhmsy.com.cn","port":6105},
+    {"host":"s6106.fzhmsy.com.cn","port":6106},
+    {"host":"s6107.fzhmsy.com.cn","port":6107}
+  ],
+  "v":1.43
+}

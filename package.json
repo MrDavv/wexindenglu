@@ -1,0 +1,16 @@
+{
+  "name": "weixindenglu",
+  "version": "0.0.1",
+  "private": false,
+  "dependencies": {
+    "bufferhelper": "*",
+    "body-parser": "*",
+    "express": "*",
+    "ejs": "*",
+    "iconv-lite": "*",
+    "mongoose": "*",
+    "wx-payment": "*",
+    "body-parser-xml": "*",
+    "queue": "*"
+  }
+}

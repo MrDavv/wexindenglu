@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>post测试</title>
+    <script>
+        let check={
+            checkPeng(arr,n){
+                if(n===99){
+                    return false;
+                }
+                return this.count(arr,n)>=2;
+            },
+            checkWaiGang(arr,n){
+                if(n===99){
+                    return false;
+                }
+                return this.count(arr,n)===3;
+            },
+            checkGang(arr){
+                let gangArray=[];
+                for(let i=1;i<=29;i++){
+                    if(i!=10&&i!=20){
+                        if(this.count(arr,i)===4){
+                            gangArray.push(i);
+                        }
+                    }
+                }
+                return gangArray;
+            },
+            canHu(arr){
+                let result=[];
+                for(let i=1;i<=29;i++){
+                    if(i!=10&&i!=20){
+                        let start=new Date().getTime();
+                        if(this.checkHu(arr,i)){
+                            result.push(i);
+                        }
+                        let end=new Date().getTime();
+                        //console.log(`测试牌：${i},耗时：${end-start}毫秒`);
+                    }
+                }
+                if(result.length>0){
+                    result.push(99);
+                }
+                return result;
+            },
+            getLike(arr){ //获取一手相邻的牌
+                let temp=[];
+                for(let n of arr){
+                    this.pushNoChongFu(temp,n);
+                    if(n!=1&&n!=11&n!=21){
+                        this.pushNoChongFu(temp,n-1);
+                    }
+                    if(n!=9&&n!=19&n!=29){
+                        this.pushNoChongFu(temp,n+1);
+                    }
+                }
+                return temp;
+            },
+            pushNoChongFu(arr,n){
+                if(arr.indexOf(n)<0){
+                    arr.push(n);
+                }
+            },
+            checkHu(arr,n){
+                let paiArray=[].concat(arr);
+                if(n){
+                    paiArray.push(n);
+                }
+                let laiZiCount=this.count(paiArray,99);
+                if(laiZiCount===4){
+                    return true;
+                }
+
+                paiArray=this.removeItem(paiArray,99); //移除癞子
+
+//                let dui=this.getDuiZi(paiArray); //获取现有的对子
+//                for(let d of dui){
+//                    let temp=[].concat(paiArray);
+//                    this.removeYiDui(temp,d);
+//                    let left=this.removeYiJuHua(temp);  //最后剩余的散牌
+////                    if(left.length<=laiZiCount)
+////                        return true;
+//                }
+
+                let paiLike=this.getLike(paiArray);  //获取有用的循环牌
+
+                //计算这些牌的权重，按照权重排序
+                //console.log(paiLike);
+                if(laiZiCount===1){
+                    for(let i=0;i<paiLike.length;i++){
+                        let arr1=[].concat(paiArray);
+                        arr1.push(paiLike[i]);
+                        //console.log(`用于验证胡的牌：${arr1.join(',')}`);
+                        if(this.checkHuNoLaiZi(arr1)){
+                            return true;
+                        }
+                    }
+                }
+
+                if(laiZiCount===2){
+                    for(let i=0;i<paiLike.length;i++){
+                        let arr1=[].concat(paiArray);
+                        arr1.push(paiLike[i]);
+                        for(let j=0;j<paiLike.length;j++){
+                            let arr2=[].concat(arr1);
+                            arr2.push(paiLike[j]);
+                            if(this.checkHuNoLaiZi(arr2)){
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                if(laiZiCount===3){
+                    //console.log(`三个癞子`);
+                    for(let i=0;i<paiLike.length;i++){
+                        let arr1=[].concat(paiArray);
+                        arr1.push(paiLike[i]);
+                        for(let j=0;j<paiLike.length;j++){
+                            let arr2=[].concat(arr1);
+                            arr2.push(paiLike[j]);
+                            for(let k=0;k<paiLike.length;k++){
+                                let arr3=[].concat(arr2);
+                                arr3.push(paiLike[k]);
+                                if(this.checkHuNoLaiZi(arr3)){
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return this.checkHuNoLaiZi(paiArray);
+            },
+            getQuanZhong(paiArray,n){
+                let temp=0;
+                if(this.count(paiArray,n)>0){
+                    temp+=2;
+                }
+                if(n%10===1){
+                    if(this.count(paiArray,n-1)>0){
+                        temp+=3;
+                    }
+                    if(this.count(paiArray,n-1)>0){
+                        temp+=3;
+                    }
+                }
+            },
+            checkHuNoLaiZi(arr){
+                if(arr.length%3!==2){
+                    return false;
+                }
+                arr.sort((a,b)=>{return a-b});
+                let dui=this.getDuiZi(arr); //获取所有对子
+                for(let i=0;i<dui.length;i++){
+                    let temp=[].concat(arr);
+                    if(this.removeYiDui(temp,dui[i])){ //如果有移除了对子
+                        if(this.removeYiJuHua(temp)){
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            },
+            getDuiZi(arr){
+                let temp=[];
+                for(let n of arr){
+                    if(this.count(arr,n)>=2){
+                        this.pushNoChongFu(temp,n);
+                    }
+                }
+                return temp;
+            },
+            arrayReduce(arr,n){
+                let temp=[];
+                arr.map((value)=>{
+                    temp.push(value-=n);
+                });
+                return temp;
+            },
+            removeYiDui(arr,n){
+                let count=this.count(arr,n);
+                if(count>=2){
+                    arr.splice(arr.indexOf(n),2);
+                }
+                return count>=2;
+            },
+            removeYiJuHua(arr){
+                let tongArray=arr.filter((value)=>{return value>0&&value<=9});
+                let suoArray=arr.filter((value)=>{return value>10&&value<=19});
+                suoArray=this.arrayReduce(suoArray,10);
+                let wanArray=arr.filter((value)=>{return value>20&&value<=29});
+                wanArray=this.arrayReduce(wanArray,20);
+                let paiStr=`${tongArray.join('')}0${suoArray.join('')}0${wanArray.join('')}`;
+                //正则过滤三个的
+                paiStr=paiStr.replace(/(111|222|333|444|555|666|777|888|999)/g,'');
+                //正则过滤连续的一句话
+                paiStr=paiStr.replace(/(122334|233445|344556|455667|566778|677889)/g,'');
+                //正则过滤单独的一句话
+                paiStr=paiStr.replace(/(123|234|345|456|567|678|789)/g,'');
+                //移除间隔符0
+                paiStr=paiStr.replace(/0/g,'');
+                return !paiStr;
+            },
+            removeItem(arr,n){
+                return arr.filter((value)=>{return value!==n});
+            },
+            count(arr,n){
+                return arr.filter((value,index)=>{return value===n}).length;
+            }
+        };
+        console.log(new Date().getTime());
+        console.log(check.canHu([1,3,4,4,5,6,6,7,7,15,99,99,99]));
+        console.log(new Date().getTime());
+    </script>
+</head>
+<body>
+    <form action="/login" method="post">
+        code：<input type="text" name="code" /><br />
+        <!--用户名：<input type="text" name="username" /><br />-->
+        <!--密码：<input type="text" name="password" /><br />-->
+        <input type="submit" value="提交" />
+    </form>
+</body>
+</html>
